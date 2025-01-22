@@ -21,8 +21,8 @@ class SearchApiView(APIView):
         query = request.query_params.get('q', "")
         if query:
             result = Content.objects.filter(
-                Q(title_icontains=query)|
-                Q(content_icontains = query)
+                Q(title__icontains=query)|
+                Q(content__icontains = query)
             )
             serializer =ContentSerializer(result, many=True)
             return Response({
@@ -46,3 +46,23 @@ class SearchApiView(APIView):
                 "data" : serializer.data
             }, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+class ContentListView(APIView):
+    def get(self , request):
+        contents = Content.objects.all()
+        serializer = ContentSerializer(contents, many=True)
+        return Response({
+            "status" : "success",
+            "count" : len(serializer.data),
+            "data" : serializer.data
+        })
+    
+
+
+# how to get query from request
+# how to get params from request 
+# how to get body from requst
+# pagination
+# sort and filter 
+# limit response (10 response ) url/?q=python&page=1&limit=10
